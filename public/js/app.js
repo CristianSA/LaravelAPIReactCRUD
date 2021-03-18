@@ -2143,7 +2143,13 @@ var Componente = /*#__PURE__*/function (_React$Component) {
         email: "",
         password: ""
       },
-      newUsuariosModal: false
+      editUsuarioData: {
+        id: "",
+        name: "",
+        email: ""
+      },
+      newUsuariosModal: false,
+      editUsuarioModal: false
     };
     return _this;
   }
@@ -2172,6 +2178,13 @@ var Componente = /*#__PURE__*/function (_React$Component) {
       });
     }
   }, {
+    key: "toggleEditUsuariosModal",
+    value: function toggleEditUsuariosModal() {
+      this.setState({
+        editUsuarioModal: !this.state.editUsuarioModal
+      });
+    }
+  }, {
     key: "nuevoUsuario",
     value: function nuevoUsuario() {
       var _this3 = this;
@@ -2193,9 +2206,55 @@ var Componente = /*#__PURE__*/function (_React$Component) {
       });
     }
   }, {
+    key: "actualizarUsuario",
+    value: function actualizarUsuario() {
+      var _this4 = this;
+
+      var _this$state$editUsuar = this.state.editUsuarioData,
+          id = _this$state$editUsuar.id,
+          name = _this$state$editUsuar.name,
+          email = _this$state$editUsuar.email;
+      axios__WEBPACK_IMPORTED_MODULE_0___default().put('http://127.0.0.1:8000/api/usuarios/' + id, {
+        name: name,
+        email: email
+      }).then(function (response) {
+        _this4.loadUsuarios();
+
+        _this4.setState({
+          editUsuarioModal: false,
+          editUsuarioData: {
+            id: "",
+            name: "",
+            email: ""
+          }
+        });
+      });
+    }
+  }, {
+    key: "editUsuario",
+    value: function editUsuario(id, name, email) {
+      this.setState({
+        editUsuarioData: {
+          id: id,
+          name: name,
+          email: email
+        },
+        editUsuarioModal: !this.state.editUsuarioModal
+      });
+    }
+  }, {
+    key: "deleteUsuario",
+    value: function deleteUsuario(id) {
+      var _this5 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default().delete('http://127.0.0.1:8000/api/usuarios/' + id).then(function (response) {
+        _this5.loadUsuarios();
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this6 = this;
 
       var usuarios = this.state.usuarios.map(function (usuarios, idx) {
         return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("tr", {
@@ -2210,10 +2269,12 @@ var Componente = /*#__PURE__*/function (_React$Component) {
               color: "success",
               size: "sm",
               className: "mr-2",
+              onClick: _this6.editUsuario.bind(_this6, usuarios.id, usuarios.name, usuarios.email, usuarios.password),
               children: "Edit"
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(reactstrap__WEBPACK_IMPORTED_MODULE_5__.default, {
               color: "danger",
               size: "sm",
+              onClick: _this6.deleteUsuario.bind(_this6, usuarios.id),
               children: "Delete"
             })]
           })]
@@ -2240,10 +2301,10 @@ var Componente = /*#__PURE__*/function (_React$Component) {
                 id: "name",
                 value: this.state.newUsuarioData.name,
                 onChange: function onChange(e) {
-                  var newUsuarioData = _this4.state.newUsuarioData;
+                  var newUsuarioData = _this6.state.newUsuarioData;
                   newUsuarioData.name = e.target.value;
 
-                  _this4.setState({
+                  _this6.setState({
                     newUsuarioData: newUsuarioData
                   });
                 }
@@ -2256,10 +2317,10 @@ var Componente = /*#__PURE__*/function (_React$Component) {
                 id: "email",
                 value: this.state.newUsuarioData.email,
                 onChange: function onChange(e) {
-                  var newUsuarioData = _this4.state.newUsuarioData;
+                  var newUsuarioData = _this6.state.newUsuarioData;
                   newUsuarioData.email = e.target.value;
 
-                  _this4.setState({
+                  _this6.setState({
                     newUsuarioData: newUsuarioData
                   });
                 }
@@ -2272,10 +2333,10 @@ var Componente = /*#__PURE__*/function (_React$Component) {
                 id: "password",
                 value: this.state.newUsuarioData.password,
                 onChange: function onChange(e) {
-                  var newUsuarioData = _this4.state.newUsuarioData;
+                  var newUsuarioData = _this6.state.newUsuarioData;
                   newUsuarioData.password = e.target.value;
 
-                  _this4.setState({
+                  _this6.setState({
                     newUsuarioData: newUsuarioData
                   });
                 }
@@ -2289,6 +2350,57 @@ var Componente = /*#__PURE__*/function (_React$Component) {
             }), ' ', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(reactstrap__WEBPACK_IMPORTED_MODULE_5__.default, {
               color: "secondary",
               onClick: this.toggleNewUsuariosModal.bind(this),
+              children: "Cancel"
+            })]
+          })]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(reactstrap__WEBPACK_IMPORTED_MODULE_6__.default, {
+          isOpen: this.state.editUsuarioModal,
+          toggle: this.toggleEditUsuariosModal.bind(this),
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(reactstrap__WEBPACK_IMPORTED_MODULE_7__.default, {
+            toggle: this.toggleEditUsuariosModal.bind(this),
+            children: "Editar usuario"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(reactstrap__WEBPACK_IMPORTED_MODULE_8__.default, {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(reactstrap__WEBPACK_IMPORTED_MODULE_9__.default, {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(reactstrap__WEBPACK_IMPORTED_MODULE_10__.default, {
+                "for": "name",
+                children: "Name"
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(reactstrap__WEBPACK_IMPORTED_MODULE_11__.default, {
+                id: "name",
+                value: this.state.editUsuarioData.name,
+                onChange: function onChange(e) {
+                  var editUsuarioData = _this6.state.editUsuarioData;
+                  editUsuarioData.name = e.target.value;
+
+                  _this6.setState({
+                    editUsuarioData: editUsuarioData
+                  });
+                }
+              })]
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(reactstrap__WEBPACK_IMPORTED_MODULE_9__.default, {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(reactstrap__WEBPACK_IMPORTED_MODULE_10__.default, {
+                "for": "email",
+                children: "Email"
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(reactstrap__WEBPACK_IMPORTED_MODULE_11__.default, {
+                id: "email",
+                value: this.state.editUsuarioData.email,
+                onChange: function onChange(e) {
+                  var editUsuarioData = _this6.state.editUsuarioData;
+                  editUsuarioData.email = e.target.value;
+
+                  _this6.setState({
+                    editUsuarioData: editUsuarioData
+                  });
+                }
+              })]
+            })]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(reactstrap__WEBPACK_IMPORTED_MODULE_12__.default, {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(reactstrap__WEBPACK_IMPORTED_MODULE_5__.default, {
+              color: "primary",
+              onClick: this.actualizarUsuario.bind(this),
+              children: "Actualizar usuario"
+            }), ' ', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(reactstrap__WEBPACK_IMPORTED_MODULE_5__.default, {
+              color: "secondary",
+              onClick: this.toggleEditUsuariosModal.bind(this),
               children: "Cancel"
             })]
           })]
@@ -2315,24 +2427,6 @@ var Componente = /*#__PURE__*/function (_React$Component) {
 
   return Componente;
 }(react__WEBPACK_IMPORTED_MODULE_1__.Component);
-/*export default class Componente extends Component {
-    render(){
-        return (
-            <div className="container">
-                <div className="row justify-content-center">
-                    <div className="col-md-8">
-                        <div className="card">
-                            <div className="card-header">
-                                Hola, este es mi primer componente con React!
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-}*/
-
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Componente);
 

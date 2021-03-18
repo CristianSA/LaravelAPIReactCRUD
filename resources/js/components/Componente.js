@@ -14,7 +14,13 @@ class Componente extends React.Component{
                 email: "",
                 password: ""
             },
-            newUsuariosModal: false
+            editUsuarioData: {
+                id:"",
+                name:"",
+                email: ""
+            },
+            newUsuariosModal: false,
+            editUsuarioModal:false
         }
     }
     loadUsuarios(){
@@ -32,6 +38,11 @@ class Componente extends React.Component{
             newUsuariosModal: !this.state.newUsuariosModal
         })
     }
+    toggleEditUsuariosModal(){
+        this.setState({
+            editUsuarioModal: !this.state.editUsuarioModal
+        })
+    }
     nuevoUsuario(){
         axios.post('http://127.0.0.1:8000/api/usuarios', this.state.newUsuarioData).then((response) => {
             let {usuarios} = this.state;
@@ -43,6 +54,31 @@ class Componente extends React.Component{
             }})
         })
     }
+    actualizarUsuario(){
+        let {id, name, email} = this.state.editUsuarioData
+        axios.put('http://127.0.0.1:8000/api/usuarios/'+id,{
+            name,
+            email
+        }).then((response) => {
+            this.loadUsuarios()
+            this.setState({editUsuarioModal: false, editUsuarioData:{
+                id:"",
+                name:"",
+                email:""
+            }})
+        })
+    }
+    editUsuario(id, name, email){
+        this.setState({
+            editUsuarioData:{id, name, email},
+            editUsuarioModal: !this.state.editUsuarioModal
+        })
+    }
+    deleteUsuario(id){
+        axios.delete('http://127.0.0.1:8000/api/usuarios/'+id).then((response) => {
+            this.loadUsuarios()
+        })
+    }
     render(){
         let usuarios = this.state.usuarios.map((usuarios, idx)=> {
             return(
@@ -51,10 +87,14 @@ class Componente extends React.Component{
                     <td>{usuarios.name}</td>
                     <td>{usuarios.email}</td>
                     <td>
-                        <Button color="success" size="sm" className="mr-2">
+                        <Button color="success" size="sm" className="mr-2"
+                            onClick={this.editUsuario.bind(this, usuarios.id, usuarios.name, usuarios.email, usuarios.password)}
+                        >
                             Edit
                         </Button>
-                        <Button color="danger" size="sm">
+                        <Button color="danger" size="sm"
+                            onClick={this.deleteUsuario.bind(this, usuarios.id)}
+                        >
                             Delete
                         </Button>
                     </td>
@@ -106,6 +146,38 @@ class Componente extends React.Component{
                     <Button color="secondary" onClick={this.toggleNewUsuariosModal.bind(this)}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
+                <Modal isOpen={this.state.editUsuarioModal} toggle={this.toggleEditUsuariosModal.bind(this)}>
+                    <ModalHeader toggle={this.toggleEditUsuariosModal.bind(this)}>Editar usuario</ModalHeader>
+                    <ModalBody>
+                        <FormGroup>
+                            <Label for="name">Name</Label>
+                            <Input id="name" 
+                            value={this.state.editUsuarioData.name}
+                            onChange={(e) => {
+                                let {editUsuarioData} = this.state
+                                editUsuarioData.name = e.target.value
+                                this.setState({ editUsuarioData})
+                            }}
+                            ></Input>
+                        </FormGroup>
+                        <FormGroup>
+                            <Label for="email">Email</Label>
+                            <Input id="email"
+                            value={this.state.editUsuarioData.email}
+                            onChange={(e) => {
+                                let {editUsuarioData} = this.state
+                                editUsuarioData.email = e.target.value
+                                this.setState({ editUsuarioData})
+                            }}
+                            ></Input>
+                        </FormGroup>
+                    </ModalBody>
+                    <ModalFooter>
+                    <Button color="primary" onClick={this.actualizarUsuario.bind(this)}>Actualizar usuario</Button>{' '}
+                    <Button color="secondary" onClick={this.toggleEditUsuariosModal.bind(this)}>Cancel</Button>
+                    </ModalFooter>
+                </Modal>
+
                 <Table>
                     <thead>
                         <tr>
@@ -123,23 +195,6 @@ class Componente extends React.Component{
         );
     }
 }
-/*export default class Componente extends Component {
-    render(){
-        return (
-            <div className="container">
-                <div className="row justify-content-center">
-                    <div className="col-md-8">
-                        <div className="card">
-                            <div className="card-header">
-                                Hola, este es mi primer componente con React!
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-}*/
 export default Componente;
 if(document.getElementById('componente')){
     ReactDOM.render(<Componente />, document.getElementById('componente'));
